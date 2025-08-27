@@ -1,17 +1,31 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
+import "@stream-io/video-react-sdk/dist/css/styles.css";
 import "./globals.css";
-import ConvexClerkProvider from "../components/providers/ConvexClerckProvider";
+import {
+  RedirectToSignIn,
+  SignedIn,
+  SignedOut,
+  SignInButton,
+} from "@clerk/nextjs";
+import { Toaster } from "react-hot-toast";
+import ConvexClerkProvider from "../components/providers/ConvexClerkProvider";
+import Navbar from "../components/Navbar";
+import { ThemeProvider } from "../components/providers/theme-provider";
+import MotionAnimate from "./animate/motionAnimate"; //for loading animation
+import { Button } from "../components/ui/button";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+// const geistSans = localFont({
+//   src: "./fonts/GeistVF.woff",
+//   variable: "--font-geist-sans",
+//   weight: "100 900",
+// });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+// const geistMono = localFont({
+//   src: "./fonts/GeistMonoVF.woff",
+//   variable: "--font-geist-mono",
+//   weight: "100 900",
+// });
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -25,11 +39,39 @@ export default function RootLayout({
 }>) {
   return (
     <ConvexClerkProvider>
-      <html lang="en">
+      <html lang="en" suppressHydrationWarning>
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          // className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          {children}
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <MotionAnimate>
+              <SignedIn>
+                <div className="min-h-screen">
+                  <Navbar />
+                  <main className="px-4 sm:px-6 lg:px-8">{children}</main>
+                </div>
+              </SignedIn>
+
+              {/* if  not authorized goto  sign in page  */}
+              <SignedOut>
+                <main className="h-screen w-screen flex items-center justify-center p-24 flex-col">
+                  <h2 className="text-2xl text-white caret-red-400 mb-2.5">
+                    {"Log In to continue"}
+                  </h2>
+                  <Button asChild>
+                    <SignInButton />
+                  </Button>
+                  <RedirectToSignIn />
+                </main>
+              </SignedOut>
+            </MotionAnimate>
+          </ThemeProvider>
+          <Toaster />
         </body>
       </html>
     </ConvexClerkProvider>

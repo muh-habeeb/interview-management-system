@@ -16,7 +16,7 @@ const http = httpRouter();
 
 // Register a new route: POST /clerk-webhook
 http.route({
-  path: "/clerk-webhook",
+  path: "/clerk-webhook",// based on url of webhook
   method: "POST",
 
   // Wrap the handler with Convex's httpAction (so we can access ctx + DB)
@@ -73,12 +73,14 @@ http.route({
 
       try {
         // Call Convex mutation to sync user into DB
-        await ctx.runMutation(api.users.syncUser, {
+        const res = await ctx.runMutation(api.users.syncUser, {
           clerkId: id,
           email,
           name,
           image: image_url,
         });
+        console.log("response", res);
+
       } catch (error) {
         console.log("Error creating user:", error);
         return new Response("Error creating user", { status: 500 });
@@ -86,7 +88,9 @@ http.route({
     }
 
     // Respond OK so Clerk knows webhook was processed
+    console.log("Webhook processed successfully:", evt);
     return new Response("Webhook processed successfully", { status: 200 });
+
   }),
 });
 
