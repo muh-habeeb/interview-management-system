@@ -13,7 +13,7 @@ export const streamTokenProvider = async () => {
     process.env.STREAM_SECRET_KEY!
   );
 
-  const token = streamClient.generateUserToken({ user_id: user.id }); // 45 min
+const token = streamClient.generateUserToken({ user_id: user.id });
 
   return token;
 };

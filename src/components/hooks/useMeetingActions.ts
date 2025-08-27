@@ -31,7 +31,10 @@ const useMeetingActions = () => {
   };
 
   const joinMeeting = (callId: string) => {
-    if (!client) return toast.error("Failed to join meeting. Please try again.");
+    if (!client) {
+      console.log("Failed to join meeting. Client is not initialized.");
+      return toast.error("Failed to join meeting. Please try again.");
+    }
     router.push(`/meeting/${callId}`);
   };
 

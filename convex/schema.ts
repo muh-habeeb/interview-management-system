@@ -16,12 +16,11 @@ export default defineSchema({
     title: v.string(),
     description: v.optional(v.string()),
     startTime: v.number(), //interview  starting time
-    endTime: v.number(), //interview  end time
+    endTime: v.optional(v.number()), //interview  end time
     status: v.string(), //status of the interview
     streamCallId: v.string(), // caller id of stream
     candidateId: v.string(), //candidate id
     interviewerIds: v.array(v.string()), // interviewers ids  [one candidate-> many interviewer]
-
     createdBy: v.string(), // who created the interview
   })
     .index("by_candidate_id", ["candidateId"])

@@ -11,15 +11,26 @@ import LoaderUI from "@/src/components/LoaderUI";
 import MeetingCard from "@/src/components/MeetingCard";
 import { Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { Doc } from "@/convex/_generated/dataModel";
+import toast from "react-hot-toast";
+
+type Interview = Doc<"interviews">;
 
 export default function Home() {
   const router = useRouter();
 
   const { isInterviewer, isCandidate, isLoading } = useUserRole();
-  const interviews = useQuery(api.interviews.getMyInterviews);
+  // const interviews = useQuery(api?.interviews?.getMyInterviews);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState<"start" | "join">();
-  console.log(isCandidate, isInterviewer);
+  const interviews = useQuery(
+    api.interviews.getMyInterviews,
+    isLoading ? "skip" : {}
+  );
+
+  //login status
+  // console.log("candidate", isCandidate, "interviewer", isInterviewer);
+  // ✅ Only run query if roles are loaded & user is signed in
 
   const handleQuickAction = (title: string) => {
     switch (title) {
@@ -87,13 +98,14 @@ export default function Home() {
               </div>
             ) : interviews.length > 0 ? (
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {interviews.map((interview) => (
+                {interviews.map((interview: Interview) => (
                   <MeetingCard key={interview._id} interview={interview} />
                 ))}
               </div>
             ) : (
               <div className="text-center py-12 text-muted-foreground">
                 You have no scheduled interviews at the moment
+                
               </div>
             )}
           </div>

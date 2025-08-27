@@ -5,7 +5,7 @@ import { ScrollArea, ScrollBar } from "./ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { AlertCircleIcon, BookIcon, LightbulbIcon } from "lucide-react";
-// import Editor from "@monaco-editor/react";
+import Editor from "@monaco-editor/react";
 
 function CodeEditor() {
   const [selectedQuestion, setSelectedQuestion] = useState(CODING_QUESTIONS[0]);
@@ -161,7 +161,7 @@ function CodeEditor() {
       <ResizableHandle withHandle />
 
       {/* CODE EDITOR */}
-      {/* <ResizablePanel defaultSize={60} maxSize={100}>
+      <ResizablePanel defaultSize={60} maxSize={100}>
         <div className="h-full relative">
           <Editor
             height={"100%"}
@@ -182,7 +182,7 @@ function CodeEditor() {
             }}
           />
         </div>
-      </ResizablePanel> */}
+      </ResizablePanel>
     </ResizablePanelGroup>
   );
 }

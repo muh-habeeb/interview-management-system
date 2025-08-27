@@ -1,9 +1,14 @@
-import { DeviceSettings, useCall, VideoPreview } from "@stream-io/video-react-sdk";
+import {
+  DeviceSettings,
+  useCall,
+  VideoPreview,
+} from "@stream-io/video-react-sdk";
 import { useEffect, useState } from "react";
 import { Card } from "./ui/card";
 import { CameraIcon, MicIcon, SettingsIcon } from "lucide-react";
 import { Switch } from "./ui/switch";
 import { Button } from "./ui/button";
+import toast from "react-hot-toast";
 
 function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
   const [isCameraDisabled, setIsCameraDisabled] = useState(true);
@@ -11,23 +16,44 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
 
   const call = useCall();
 
-  if (!call) return null;
-
+  // ✅ run effects unconditionally, guard inside
   useEffect(() => {
+    if (!call) return;
+
     if (isCameraDisabled) call.camera.disable();
     else call.camera.enable();
-  }, [isCameraDisabled, call.camera]);
+  }, [isCameraDisabled, call]);
 
   useEffect(() => {
+    if (!call) return;
+
     if (isMicDisabled) call.microphone.disable();
     else call.microphone.enable();
-  }, [isMicDisabled, call.microphone]);
+  }, [isMicDisabled, call]);
 
   const handleJoin = async () => {
-    await call.join();
-    onSetupComplete();
+    if (!call) return;
+
+    try {
+      await call.join();
+      onSetupComplete();
+    } catch (err: any) {
+      console.error("Join failed:", err);
+      if (err.message?.includes("blocked")) {
+        toast.error("You cannot join this call — your account was blocked.");
+      } else if (err.status === 403) {
+        toast.error("You are blocked from joining this call.");
+      } else {
+        toast.error("Failed to join the call. Please try again later.");
+        console.log(err);
+      }
+    }
   };
 
+  // ✅ handle `!call` in JSX, not before hooks
+  if (!call) {
+    return <p>Loading call...</p>;
+  }
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-background/95">
       <div className="w-full max-w-[1200px] mx-auto">
@@ -36,7 +62,9 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
           <Card className="md:col-span-1 p-6 flex flex-col">
             <div>
               <h1 className="text-xl font-semibold mb-1">Camera Preview</h1>
-              <p className="text-sm text-muted-foreground">Make sure you look good!</p>
+              <p className="text-sm text-muted-foreground">
+                Make sure you look good!
+              </p>
             </div>
 
             {/* VIDEO PREVIEW */}
@@ -54,7 +82,9 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
               {/* MEETING DETAILS  */}
               <div>
                 <h2 className="text-xl font-semibold mb-1">Meeting Details</h2>
-                <p className="text-sm text-muted-foreground break-all">{call.id}</p>
+                <p className="text-sm text-muted-foreground break-all">
+                  {call.id}
+                </p>
               </div>
 
               <div className="flex-1 flex flex-col justify-between">
@@ -74,7 +104,9 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
                     </div>
                     <Switch
                       checked={!isCameraDisabled}
-                      onCheckedChange={(checked) => setIsCameraDisabled(!checked)}
+                      onCheckedChange={(checked) =>
+                        setIsCameraDisabled(!checked)
+                      }
                     />
                   </div>
 
@@ -105,7 +137,9 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
                       </div>
                       <div>
                         <p className="font-medium">Settings</p>
-                        <p className="text-sm text-muted-foreground">Configure devices</p>
+                        <p className="text-sm text-muted-foreground">
+                          Configure devices
+                        </p>
                       </div>
                     </div>
                     <DeviceSettings />
@@ -118,7 +152,8 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
                     Join Meeting
                   </Button>
                   <p className="text-xs text-center text-muted-foreground">
-                    Do not worry, our team is super friendly! We want you to succeed. 🎉
+                    Do not worry, our team is super friendly! We want you to
+                    succeed. 🎉
                   </p>
                 </div>
               </div>

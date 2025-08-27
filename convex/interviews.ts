@@ -17,7 +17,10 @@ export const getMyInterviews = query({
   args: {},
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Unauthorized");
+    if (!identity) {
+      // return empty instead of throwing
+      return [];
+    }
 
     const interviews = await ctx.db
       .query("interviews")
@@ -29,16 +32,12 @@ export const getMyInterviews = query({
   },
 });
 
-export const getInterviewsByStreamCallId = query({
+export const getInterviewByStreamCallId = query({
   args: { streamCallId: v.string() },
   handler: async (ctx, args) => {
-    // const identity = await ctx.auth.getUserIdentity();
-    // if (!identity) throw new Error("Unauthorized");
     return await ctx.db
       .query("interviews")
-      .withIndex("by_stream_call_id", (q) =>
-        q.eq("streamCallId", args.streamCallId)
-      )
+      .withIndex("by_stream_call_id", (q) => q.eq("streamCallId", args.streamCallId))
       .first();
   },
 });
@@ -52,7 +51,7 @@ export const createInterview = mutation({
     description: v.optional(v.string()),
     status: v.string(),
     startTime: v.number(),
-    endTime: v.number(),
+    endTime: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -60,7 +59,7 @@ export const createInterview = mutation({
 
     return await ctx.db.insert("interviews", {
       ...args,
-      streamCallId: args.streamCallId, // rename to match table schema
+      // streamCallId: args.streamCallId, // rename to match table schema
       createdBy: identity.subject, // set creator
     });
   },
@@ -68,14 +67,14 @@ export const createInterview = mutation({
 
 export const updateInterviewStatus = mutation({
   args: {
-    interviewId: v.id("interviews"),
+    id: v.id("interviews"),
     status: v.string(),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) throw new Error("Unauthorized");
 
-    return await ctx.db.patch(args.interviewId, {
+    return await ctx.db.patch(args.id, {
       status: args.status,
       ...(args.status === "completed" ? { endTime: Date.now() } : {}), //update only if completed the endtime
     });
