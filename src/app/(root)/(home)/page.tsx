@@ -12,7 +12,6 @@ import MeetingCard from "@/src/components/MeetingCard";
 import { Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Doc } from "@/convex/_generated/dataModel";
-import toast from "react-hot-toast";
 
 type Interview = Doc<"interviews">;
 
@@ -48,6 +47,7 @@ export default function Home() {
   };
 
   if (isLoading) return <LoaderUI />;
+  
 
   return (
     <div className="container max-w-7xl mx-auto p-6">

@@ -32,6 +32,7 @@ type Interview = Doc<"interviews">;
 
 function InterviewScheduleUI() {
   const client = useStreamVideoClient();
+
   const { user } = useUser();
   const [open, setOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
@@ -186,6 +187,12 @@ function InterviewScheduleUI() {
     (i) => !formData.interviewerIds.includes(i.clerkId)
   );
 
+
+
+  
+  if(!client){
+    return <><h2>no client</h2></>
+  }
   return (
     <div className="container max-w-7xl mx-auto p-6 space-y-8">
       <div className="flex items-center justify-between">

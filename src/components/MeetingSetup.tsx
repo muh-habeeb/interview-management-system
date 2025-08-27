@@ -1,4 +1,5 @@
 import {
+  CallingState,
   DeviceSettings,
   useCall,
   VideoPreview,
@@ -13,28 +14,51 @@ import toast from "react-hot-toast";
 function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
   const [isCameraDisabled, setIsCameraDisabled] = useState(true);
   const [isMicDisabled, setIsMicDisabled] = useState(false);
+  const [hasJoined, setHasJoined] = useState(false);
 
   const call = useCall();
 
-  // ✅ run effects unconditionally, guard inside
+  // Camera effect
   useEffect(() => {
     if (!call) return;
-
     if (isCameraDisabled) call.camera.disable();
     else call.camera.enable();
   }, [isCameraDisabled, call]);
 
+  // Mic effect
   useEffect(() => {
     if (!call) return;
-
     if (isMicDisabled) call.microphone.disable();
     else call.microphone.enable();
   }, [isMicDisabled, call]);
 
+  // Reset hasJoined if user leaves the call
+  useEffect(() => {
+    if (!call) return;
+     const handleCallingStateChange = () => {
+    if (call.state.callingState !== CallingState.JOINED) {
+      setHasJoined(false);
+    }
+  };
+
+  // Correct event type
+  call.on("callingState", handleCallingStateChange);
+
+  return () => {
+    call.off("callingState", handleCallingStateChange);
+  };
+  }, [call]);
+
   const handleJoin = async () => {
     if (!call) return;
 
+    if (hasJoined || call.state.callingState === CallingState.JOINED) {
+      toast.success("You are already in the meeting.");
+      return;
+    }
+
     try {
+      setHasJoined(true); //prevent multiple clicks
       await call.join();
       onSetupComplete();
     } catch (err: any) {
@@ -45,123 +69,97 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
         toast.error("You are blocked from joining this call.");
       } else {
         toast.error("Failed to join the call. Please try again later.");
-        console.log(err);
       }
     }
   };
 
-  // ✅ handle `!call` in JSX, not before hooks
-  if (!call) {
-    return <p>Loading call...</p>;
-  }
+  if (!call) return <p>Loading call...</p>;
+
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-background/95">
       <div className="w-full max-w-[1200px] mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* VIDEO PREVIEW CONTAINER */}
+          {/* Video Preview */}
           <Card className="md:col-span-1 p-6 flex flex-col">
-            <div>
-              <h1 className="text-xl font-semibold mb-1">Camera Preview</h1>
-              <p className="text-sm text-muted-foreground">
-                Make sure you look good!
-              </p>
-            </div>
-
-            {/* VIDEO PREVIEW */}
+            <h1 className="text-xl font-semibold mb-1">Camera Preview</h1>
+            <p className="text-sm text-muted-foreground">Make sure you look good!</p>
             <div className="mt-4 flex-1 min-h-[400px] rounded-xl overflow-hidden bg-muted/50 border relative">
-              <div className="absolute inset-0">
-                <VideoPreview className="h-full w-full" />
-              </div>
+              <VideoPreview className="absolute inset-0 h-full w-full" />
             </div>
           </Card>
 
-          {/* CARD CONTROLS */}
+          {/* Controls */}
+          <Card className="md:col-span-1 p-6 flex flex-col justify-between">
+            <div>
+              <h2 className="text-xl font-semibold mb-1">Meeting Details</h2>
+              <p className="text-sm text-muted-foreground break-all">{call.id}</p>
+            </div>
 
-          <Card className="md:col-span-1 p-6">
-            <div className="h-full flex flex-col">
-              {/* MEETING DETAILS  */}
-              <div>
-                <h2 className="text-xl font-semibold mb-1">Meeting Details</h2>
-                <p className="text-sm text-muted-foreground break-all">
-                  {call.id}
-                </p>
+            <div className="space-y-6 mt-8">
+              {/* Camera */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                    <CameraIcon className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-medium">Camera</p>
+                    <p className="text-sm text-muted-foreground">
+                      {isCameraDisabled ? "Off" : "On"}
+                    </p>
+                  </div>
+                </div>
+                <Switch
+                  checked={!isCameraDisabled}
+                  onCheckedChange={(checked) => setIsCameraDisabled(!checked)}
+                />
               </div>
 
-              <div className="flex-1 flex flex-col justify-between">
-                <div className="spacey-6 mt-8">
-                  {/* CAM CONTROL */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                        <CameraIcon className="h-5 w-5 text-primary" />
-                      </div>
-                      <div>
-                        <p className="font-medium">Camera</p>
-                        <p className="text-sm text-muted-foreground">
-                          {isCameraDisabled ? "Off" : "On"}
-                        </p>
-                      </div>
-                    </div>
-                    <Switch
-                      checked={!isCameraDisabled}
-                      onCheckedChange={(checked) =>
-                        setIsCameraDisabled(!checked)
-                      }
-                    />
+              {/* Mic */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                    <MicIcon className="h-5 w-5 text-primary" />
                   </div>
-
-                  {/* MIC CONTROL */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                        <MicIcon className="h-5 w-5 text-primary" />
-                      </div>
-                      <div>
-                        <p className="font-medium">Microphone</p>
-                        <p className="text-sm text-muted-foreground">
-                          {isMicDisabled ? "Off" : "On"}
-                        </p>
-                      </div>
-                    </div>
-                    <Switch
-                      checked={!isMicDisabled}
-                      onCheckedChange={(checked) => setIsMicDisabled(!checked)}
-                    />
-                  </div>
-
-                  {/* DEVICE SETTINGS */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                        <SettingsIcon className="h-5 w-5 text-primary" />
-                      </div>
-                      <div>
-                        <p className="font-medium">Settings</p>
-                        <p className="text-sm text-muted-foreground">
-                          Configure devices
-                        </p>
-                      </div>
-                    </div>
-                    <DeviceSettings />
+                  <div>
+                    <p className="font-medium">Microphone</p>
+                    <p className="text-sm text-muted-foreground">
+                      {isMicDisabled ? "Off" : "On"}
+                    </p>
                   </div>
                 </div>
+                <Switch
+                  checked={!isMicDisabled}
+                  onCheckedChange={(checked) => setIsMicDisabled(!checked)}
+                />
+              </div>
 
-                {/* JOIN BTN */}
-                <div className="space-y-3 mt-8">
-                  <Button className="w-full" size="lg" onClick={handleJoin}>
-                    Join Meeting
-                  </Button>
-                  <p className="text-xs text-center text-muted-foreground">
-                    Do not worry, our team is super friendly! We want you to
-                    succeed. 🎉
-                  </p>
+              {/* Device settings */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                    <SettingsIcon className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-medium">Settings</p>
+                    <p className="text-sm text-muted-foreground">Configure devices</p>
+                  </div>
                 </div>
+                <DeviceSettings />
               </div>
             </div>
+
+            <Button className="w-full mt-6" size="lg" onClick={handleJoin} disabled={hasJoined}>
+              {hasJoined ? "Joined" : "Join Meeting"}
+            </Button>
+            <p className="text-xs text-center text-muted-foreground mt-2">
+              Do not worry, our team is super friendly! We want you to succeed. 🎉
+            </p>
           </Card>
         </div>
       </div>
     </div>
   );
 }
+
 export default MeetingSetup;
