@@ -59,7 +59,7 @@ export default function RootLayout({
               {/* if  not authorized goto  sign in page  */}
               <SignedOut>
                 <main className="h-screen w-screen flex items-center justify-center p-24 flex-col">
-                  <h2 className="text-2xl text-white shadow-green-50 mb-2.5">
+                  <h2 className="text-2xl dark:text -white shadow-green-50 mb-2.5">
                     {"Log In to continue"}
                   </h2>
                   <Button asChild>

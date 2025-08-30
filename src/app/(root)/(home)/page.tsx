@@ -28,11 +28,12 @@ export default function Home() {
   );
 
   //login status
-  // console.log("candidate", isCandidate, "interviewer", isInterviewer);
-  // ✅ Only run query if roles are loaded & user is signed in
+  console.log("candidate", isCandidate, "interviewer", isInterviewer);
+  //  Only run query if roles are loaded & user is signed in
 
   const handleQuickAction = (title: string) => {
     switch (title) {
+      //this will start the function new call 
       case "New Call":
         setModalType("start");
         setShowModal(true);
@@ -47,7 +48,7 @@ export default function Home() {
   };
 
   if (isLoading) return <LoaderUI />;
-  
+
 
   return (
     <div className="container max-w-7xl mx-auto p-6">
@@ -105,9 +106,12 @@ export default function Home() {
             ) : (
               <div className="text-center py-12 text-muted-foreground">
                 You have no scheduled interviews at the moment
-                
+                interviewer will be scheduled bby the interviewer and it will be displayed hear, then you can join
               </div>
+
             )}
+
+            {/* //todo : add join btn  */}
           </div>
         </>
       )}

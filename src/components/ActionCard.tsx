@@ -7,6 +7,7 @@ import { Card } from "./ui/card";
 // from-purple-500/10 via-purple-500/5 to-transparent
 // from-primary/10 via-primary/5 to-transparent
 
+// action  card used in admin dashboard for going to another pages 
 function ActionCard({ action, onClick }: { action: QuickActionType; onClick: () => void }) {
   return (
     <Card
