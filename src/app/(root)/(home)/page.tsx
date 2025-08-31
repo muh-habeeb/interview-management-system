@@ -108,7 +108,28 @@ export default function Home() {
                 You have no scheduled interviews at the moment
                 interviewer will be scheduled bby the interviewer and it will be displayed hear, then you can join
               </div>
+            )}
+            {!isInterviewer && (
+              <div className="">
+                <>
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {QUICK_ACTIONS.map((action,) => (
+                      <ActionCard
+                        key={action.title}
+                        action={action}
+                        onClick={() => handleQuickAction(action.title)}
+                      />
+                    )).filter((item)=>item.title=="Join Interview")}
+                  </div>
 
+                  <MeetingModal
+                    isOpen={showModal}
+                    onClose={() => setShowModal(false)}
+                    title={modalType === "join" ? "Join Meeting" : ""}
+                    isJoinMeeting={modalType === "join"}
+                  />
+                </>
+              </div>
             )}
 
             {/* //todo : add join btn  */}
