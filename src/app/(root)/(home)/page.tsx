@@ -113,7 +113,7 @@ export default function Home() {
               <div className="">
                 <>
                   <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {QUICK_ACTIONS.map((action,) => (
+                    {QUICK_ACTIONS.map((action) => (
                       <ActionCard
                         key={action.title}
                         action={action}
