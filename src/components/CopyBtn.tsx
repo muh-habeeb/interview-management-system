@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, ReactNode } from "react";
-import { CopyIcon, CopyCheckIcon, Check } from "lucide-react";
+import { CopyIcon, CopyCheckIcon } from "lucide-react";
 import toast from "react-hot-toast";
 
 interface CopyToClipboardProps {
@@ -66,7 +66,7 @@ export  function CopyToClipboard({
     return (
       <button
         onClick={handleCopy}
-        className="text-sm px-2 py-0 rounded-md bg-zinc-700 hover:bg-zinc-600 active:scale-95 transition text-white cursor-pointer"
+        className="text-sm px-2  rounded-sm bg-zinc-700  hover:bg-zinc-600 active:scale-95 transition text-white cursor-pointer"
       >
         {copied ? "Copied" : "Copy"}
       </button>
@@ -77,7 +77,7 @@ export  function CopyToClipboard({
   return (
     <span onClick={handleCopy} className="cursor-pointer">
       {copied ? (
-        <Check className="size-5 text-green-500 transition-colors active:scale-95" />
+        <CopyCheckIcon className="size-5 text-green-500 transition-colors active:scale-95 " />
       ) : (
         <CopyIcon className="size-5 transition-opacity active:scale-95" />
       )}

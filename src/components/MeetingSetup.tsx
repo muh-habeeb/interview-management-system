@@ -10,7 +10,7 @@ import { CameraIcon, CopyIcon, MicIcon, SettingsIcon } from "lucide-react";
 import { Switch } from "./ui/switch";
 import { Button } from "./ui/button";
 import toast from "react-hot-toast";
-import CopyBtn from "../components/CopyBtn"
+import {CopyToClipboard} from "../components/CopyBtn"
 
 
 function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
@@ -95,7 +95,7 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
             <div>
               <h2 className="text-xl font-semibold mb-1">Meeting Details</h2>
               <p className="flex justify-between text-sm text-muted-foreground break-all p-1 bg-zinc-700 rounded-md">{call.id}
-                <CopyBtn value={call.id}/>
+                <CopyToClipboard textMode value={call.id}/>
               </p>
             </div>
 
@@ -104,7 +104,7 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <CameraIcon className="h-5 w-5 text-primary" />
+                    <CameraIcon className="h-5 w-5 text-primary"  / >
                   </div>
                   <div>
                     <p className="font-medium">Camera</p>
