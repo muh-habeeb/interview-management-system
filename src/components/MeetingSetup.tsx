@@ -6,10 +6,12 @@ import {
 } from "@stream-io/video-react-sdk";
 import { useEffect, useState } from "react";
 import { Card } from "./ui/card";
-import { CameraIcon, MicIcon, SettingsIcon } from "lucide-react";
+import { CameraIcon, CopyIcon, MicIcon, SettingsIcon } from "lucide-react";
 import { Switch } from "./ui/switch";
 import { Button } from "./ui/button";
 import toast from "react-hot-toast";
+import { CopyToClipboard } from "../components/CopyBtn"
+
 
 function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
   const [isCameraDisabled, setIsCameraDisabled] = useState(true);
@@ -35,18 +37,13 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
   // Reset hasJoined if user leaves the call
   useEffect(() => {
     if (!call) return;
-     const handleCallingStateChange = () => {
-    if (call.state.callingState !== CallingState.JOINED) {
-      setHasJoined(false);
-    }
-  };
+    const handleCallingStateChange = () => {
+      if (call.state.callingState !== CallingState.JOINED) {
+        setHasJoined(false);
+      }
+    };
 
-  // Correct event type
-  call.on("callingState", handleCallingStateChange);
 
-  return () => {
-    call.off("callingState", handleCallingStateChange);
-  };
   }, [call]);
 
   const handleJoin = async () => {
@@ -88,15 +85,20 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
             </div>
           </Card>
 
-          {/* Controls */}
+          {/* Controls & copy id bt */}
           <Card className="md:col-span-1 p-6 flex flex-col justify-between">
             <div>
               <h2 className="text-xl font-semibold mb-1">Meeting Details</h2>
-              <p className="text-sm text-muted-foreground break-all">{call.id}</p>
+              <p className="flex justify-between text-sm text-muted-foreground break-all p-1 dark:bg-zinc-700  rounded-md bg-ring ">
+                <span className="dark:bg-neutral-800  px-2 rounded-md text-white">{call.id}</span>
+                <span className="flex items-center justify-center">
+                {/*copy btn*/}  <CopyToClipboard value={call.id} textMode />
+                </span>
+              </p>
             </div>
 
             <div className="space-y-6 mt-8">
-              {/* Camera */}
+              {/* Camera  */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">

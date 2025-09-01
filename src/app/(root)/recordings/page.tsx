@@ -35,6 +35,7 @@ function RecordingsPage() {
     <div className="container max-w-7xl mx-auto p-6">
       {/* HEADER SECTION */}
       <h1 className="text-3xl font-bold">Recordings</h1>
+        <p className="my-2 capitalize text-gray-400">watch your interview recordings</p>
       <p className="text-muted-foreground my-1">
         {recordings.length} {recordings.length === 1 ? "recording" : "recordings"} available
       </p>

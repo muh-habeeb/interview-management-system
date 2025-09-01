@@ -63,6 +63,28 @@ export default function Home() {
             : "Access your upcoming interviews and preparations"}
         </p>
       </div>
+      {!isInterviewer && (
+        <div className="grid sm:grid-cols-2 lg:grid-cols-2 gap-6 p">
+          {QUICK_ACTIONS.filter((action) => ["Join Interview", "Recordings"].includes(action.title)
+          ).map(
+            (action) => (
+              <ActionCard
+                key={action.title}
+                action={action}
+                onClick={() => handleQuickAction(action.title)}
+              />
+            )
+          )}
+
+          <MeetingModal
+            isOpen={showModal}
+            onClose={() => setShowModal(false)}
+            title={modalType === "join" ? "Join Meeting" : ""}
+            isJoinMeeting={modalType === "join"}
+          />
+        </div>
+
+      )}
 
       {isInterviewer ? (
         <>
@@ -108,10 +130,8 @@ export default function Home() {
                 You have no scheduled interviews at the moment
                 interviewer will be scheduled bby the interviewer and it will be displayed hear, then you can join
               </div>
-
             )}
 
-            {/* //todo : add join btn  */}
           </div>
         </>
       )}

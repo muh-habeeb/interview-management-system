@@ -66,10 +66,9 @@ function InterviewScheduleUI() {
     //extract data
     const { title, description, date, time, candidateId, interviewerIds } =
       formData;
-//empty check
+    //empty check
     const rules = [
       { valid: title.trim() !== "", message: "Title is required" },
-      // { valid: date > new Date(), message: "Date must be in the future" },
       { valid: !!date, message: "Date is required" },
       { valid: !!time, message: "Time is required" },
       { valid: description.trim() !== "", message: "Description is required" },
@@ -78,7 +77,9 @@ function InterviewScheduleUI() {
         valid: interviewerIds.length > 0,
         message: "At least one interviewer is required",
       },
+
     ];
+
 
     //validation check
     for (const rule of rules) {
@@ -104,7 +105,7 @@ function InterviewScheduleUI() {
       );
       return;
     }
-// update state
+    // update state
     setIsCreating(true);
 
     try {
@@ -113,14 +114,14 @@ function InterviewScheduleUI() {
       const { title, description, date, time, candidateId, interviewerIds } =
         formData;
 
-        //extract data
-        //get time
+      //extract data
+      //get time
       const [hours, minutes] = time.split(":");
       //get date of the meeting
       const meetingDate = new Date(date);
       // format date for storing
       meetingDate.setHours(parseInt(hours), parseInt(minutes), 0);
-///
+      ///
       const id = crypto.randomUUID();
       const call = client?.call("default", id);
 
@@ -186,11 +187,13 @@ function InterviewScheduleUI() {
   const availableInterviewers = interviewers.filter(
     (i) => !formData.interviewerIds.includes(i.clerkId)
   );
+  const now = new Date();
+  const today = now.toISOString().split("T")[0]; // YYYY-MM-DD
 
 
 
-  
-  if(!client){
+
+  if (!client) {
     return <><h2>no client</h2></>
   }
   return (
@@ -334,11 +337,28 @@ function InterviewScheduleUI() {
                       <SelectValue placeholder="Select time" />
                     </SelectTrigger>
                     <SelectContent>
-                      {TIME_SLOTS.map((time) => (
-                        <SelectItem key={time} value={time}>
-                          {time}
-                        </SelectItem>
-                      ))}
+                      {TIME_SLOTS.map((time) => {
+                        // current time in minutes
+                        const now = new Date();
+                        const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+                        // slot time in minutes
+                        const [hh, mm] = time.split(":").map(Number);
+                        const slotMinutes = hh * 60 + mm;
+
+                        // disable if slot is before or equal to current time
+                        const isPast = slotMinutes <= currentMinutes;
+                        console.log(time, isPast)
+                        return (
+                          <SelectItem
+                            key={time}
+                            value={time}
+                            disabled={isPast}
+                          >
+                            {time}
+                          </SelectItem>
+                        );
+                      })}
                     </SelectContent>
                   </Select>
                 </div>

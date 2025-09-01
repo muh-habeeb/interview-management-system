@@ -95,7 +95,7 @@ function MeetingRoom() {
         <ResizableHandle withHandle />
 
         <ResizablePanel defaultSize={65} minSize={25}>
-          <CodeEditor />
+          {/* <CodeEditor /> */}
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>

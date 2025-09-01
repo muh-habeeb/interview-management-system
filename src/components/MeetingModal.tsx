@@ -38,7 +38,7 @@ function MeetingModal({ isOpen, onClose, title, isJoinMeeting }: MeetingModalPro
         <div className="space-y-4 pt-4">
           {isJoinMeeting && (
             <Input
-              placeholder="Paste meeting link here..."
+              placeholder="Paste meeting id here..."
               value={meetingUrl}
               onChange={(e) => setMeetingUrl(e.target.value)}
             />
