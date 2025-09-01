@@ -6,10 +6,12 @@ import {
 } from "@stream-io/video-react-sdk";
 import { useEffect, useState } from "react";
 import { Card } from "./ui/card";
-import { CameraIcon, MicIcon, SettingsIcon } from "lucide-react";
+import { CameraIcon, CopyIcon, MicIcon, SettingsIcon } from "lucide-react";
 import { Switch } from "./ui/switch";
 import { Button } from "./ui/button";
 import toast from "react-hot-toast";
+import CopyBtn from "../components/CopyBtn"
+
 
 function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
   const [isCameraDisabled, setIsCameraDisabled] = useState(true);
@@ -88,15 +90,17 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
             </div>
           </Card>
 
-          {/* Controls */}
+          {/* Controls & copy id bt */}
           <Card className="md:col-span-1 p-6 flex flex-col justify-between">
             <div>
               <h2 className="text-xl font-semibold mb-1">Meeting Details</h2>
-              <p className="text-sm text-muted-foreground break-all">{call.id}</p>
+              <p className="flex justify-between text-sm text-muted-foreground break-all p-1 bg-zinc-700 rounded-md">{call.id}
+                <CopyBtn value={call.id}/>
+              </p>
             </div>
 
             <div className="space-y-6 mt-8">
-              {/* Camera */}
+              {/* Camera  */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">

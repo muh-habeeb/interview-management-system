@@ -119,7 +119,8 @@ export default function Home() {
                         action={action}
                         onClick={() => handleQuickAction(action.title)}
                       />
-                    )).filter((item)=>item.title=="Join Interview")}
+                    ))}
+                    {/* )).filter((item)=>item.title=="Join Interview")} */}
                   </div>
 
                   <MeetingModal
