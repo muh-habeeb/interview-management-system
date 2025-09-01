@@ -14,6 +14,7 @@ import Navbar from "../components/Navbar";
 import { ThemeProvider } from "../components/providers/theme-provider";
 import MotionAnimate from "./animate/motionAnimate"; //for loading animation
 import { Button } from "../components/ui/button";
+import CheckInternet from "../components/CheckInternet";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -68,6 +69,7 @@ export default function RootLayout({
                   <RedirectToSignIn />
                 </main>
               </SignedOut>
+              <CheckInternet />
             </MotionAnimate>
           </ThemeProvider>
           <Toaster />
