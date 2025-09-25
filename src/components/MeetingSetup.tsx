@@ -80,8 +80,8 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
           <Card className="md:col-span-1 p-6 flex flex-col">
             <h1 className="text-xl font-semibold mb-1">Camera Preview</h1>
             <p className="text-sm text-muted-foreground">Make sure you look good!</p>
-            <div className="mt-4 flex-1 min-h-[400px] rounded-xl overflow-hidden bg-muted/50 border relative">
-              <VideoPreview className="absolute inset-0 h-full w-full" />
+            <div className="mt-4 flex-1 min-h-[400px]  rounded-xl overflow-hidden bg-muted/50 border relative">
+              <VideoPreview className="absolute" mirror={true}/>
             </div>
           </Card>
 
