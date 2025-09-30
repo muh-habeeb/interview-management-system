@@ -2,16 +2,61 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the development server:
+First,
+clone repo
+
+```
+git clone https://github.com/muh-habeeb/interview-management-system.git
+```
+
+then
+### setup .env.local
+#### create a file named .env.local in the root if not exist 
+then 
+
+
+
+set up keys
+```
+
+
+# clerk keys
+
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_
+CLERK_SECRET_KEY=sk_test_
+
+# _++++++++++++++++++++++++++++
+
+
+# Deployment used by npx convex dev
+CONVEX_DEPLOYMENT=
+
+NEXT_PUBLIC_CONVEX_URL=
+
+
+NEXT_PUBLIC_STREAM_API_KEY=
+
+STREAM_SECRET_KEY=
+
+
+
+
+CLERK_JWT_ISSUER_DOMAIN=
+
+
+# added to convex
+CLERK_WEBHOOK_SECRET=
+
+```
+secondly,run the development server:
+
+
 
 ```bash
+
+npm install 
+#next
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 convex setup
 npx convex dev
