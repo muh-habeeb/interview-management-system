@@ -1,6 +1,6 @@
-remove editor for interviewer
+remove editor for interviewer  :middle
 
 add chat 
 
-add join for candidate
+add join for candidate  :done
 

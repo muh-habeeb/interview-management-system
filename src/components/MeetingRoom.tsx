@@ -94,8 +94,9 @@ function MeetingRoom() {
 
         <ResizableHandle withHandle />
 
-        <ResizablePanel defaultSize={65} minSize={25}>
+        <ResizablePanel defaultSize={20} minSize={10}>
           {/* <CodeEditor /> */}
+          {/*TODO: {"live chat"} */}
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>
