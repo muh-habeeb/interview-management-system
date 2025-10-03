@@ -2,20 +2,50 @@
   <h1>🎯 Interview Management System</h1>
   
   <p>
-    <strong>A comprehensive interview scheduling and meeting management platform</strong>
+    <strong>A comprehensive Next.js interview scheduling and meeting management platform</strong>
   </p>
   
   <p>
-    Built with Next.js, Convex, Stream, and Clerk for seamless interview experiences
+    Built with Next.js 15 (App Router), Convex, Stream, and Clerk for seamless interview experiences
   </p>
 
   ![Next.js](https://img.shields.io/badge/Next.js-15.4.7-black?style=for-the-badge&logo=next.js&logoColor=white)
+  ![React](https://img.shields.io/badge/React-19.1.0-61DAFB?style=for-the-badge&logo=react&logoColor=white)
   ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript&logoColor=white)
   ![Convex](https://img.shields.io/badge/Convex-Database-orange?style=for-the-badge&logo=convex&logoColor=white)
   ![Stream](https://img.shields.io/badge/Stream-Video-006CFF?style=for-the-badge&logo=stream&logoColor=white)
   ![Clerk](https://img.shields.io/badge/Clerk-Auth-6C47FF?style=for-the-badge&logo=clerk&logoColor=white)
 
   <p>
+    <a href="https://github.com/muh-habeeb/interview-management-system"><strong>📖 Repository</strong></a> •
+    <a href="#-getting-started"><strong>🚀 Quick Start</strong></a> •
+    <a href="#-features"><strong>✨ Features</strong></a> •
+    <a href="#-contributing"><strong>🤝 Contributing</strong></a>
+  </p>
+
+  <br>
+
+  <!-- Add your screenshot here -->
+  <!-- ![Screenshot](./public/screenshot.png) -->
+  <em>Screenshot coming soon - add your app screenshot to /public/screenshot.png</em>
+
+</div>
+
+---
+
+## 📋 Table of Contents
+
+- [✨ Features](#-features)
+- [🛠 Tech Stack](#-tech-stack)
+- [📁 Project Structure](#-project-structure)
+- [⚡ Requirements](#-requirements)
+- [🚀 Getting Started](#-getting-started)
+- [🔧 Environment Variables](#-environment-variables)
+- [📜 Scripts](#-scripts)
+- [☁️ Deployment](#-deployment)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
+- [👥 Contact](#-contact)
     <a href="https://github.com/muh-habeeb/interview-management-system"><strong>📖 Repository</strong></a> •
     <a href="#-getting-started"><strong>🚀 Quick Start</strong></a> •
     <a href="#-features"><strong>✨ Features</strong></a> •
@@ -97,14 +127,25 @@
 - 📊 **Admin Dashboard** - Comprehensive admin interface
 - 🎬 **Recording Management** - Automatic recording and playback features
 
+### ⚡ Next.js Features
+
+- 🚀 **App Router** - Next.js 15 with modern App Router architecture
+- 🏎️ **Turbopack** - Ultra-fast bundler for development
+- 🎨 **Server Components** - Optimized React Server Components
+- 📱 **Responsive Design** - Mobile-first responsive interface
+- ⚡ **Static Generation** - Optimized builds with SSG/SSR
+- 🔍 **SEO Optimized** - Built-in SEO features with Next.js
+
 ## 🛠 Tech Stack
 
 <div align="center">
 
-### Frontend
-![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
-![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
-![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+### Next.js Full-Stack Framework
+![Next.js](https://img.shields.io/badge/Next.js-15.4.7-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
+![React](https://img.shields.io/badge/React-19.1.0-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+
+### UI & Styling
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 ![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-000000?style=for-the-badge&logo=shadcnui&logoColor=white)
 
@@ -124,8 +165,9 @@
 
 | Category | Technology | Purpose |
 |----------|------------|---------|
-| **Frontend** | Next.js (App Router) | React framework with server-side rendering |
-| **Language** | TypeScript | Type-safe JavaScript |
+| **Framework** | Next.js 15 (App Router) | Full-stack React framework with SSR/SSG |
+| **Frontend** | React 19 | UI library with Server Components |
+| **Language** | TypeScript | Type-safe JavaScript development |
 | **Styling** | Tailwind CSS | Utility-first CSS framework |
 | **UI Components** | shadcn/ui | Beautiful, accessible React components |
 | **Backend** | Convex | Real-time database and server functions |
@@ -248,7 +290,7 @@ STREAM_SECRET_KEY=your_stream_secret_key
 
 > ⚠️ **Security Note**: Never commit secrets to version control. Use `.env.local` for local development and environment variables in production.
 
-</details>## 📜 Scripts
+</details> ## 📜 Scripts
 
 | Command | Description | When to use |
 |---------|-------------|-------------|
@@ -467,14 +509,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <table>
   <tbody>
     <tr>
-      <td align="center" valign="top" width="14.28%">
-        <a href="https://github.com/muh-habeeb">
-          <img src="https://github.com/muh-habeeb.png" width="100" style="border-radius: 50%" alt="muh-habeeb"/>
-          <br><sub><b>muh-habeeb</b></sub>
-        </a>
-        <br>💻 📖 🎨 ⚡ 🔧
-      </td>
-      <!-- Add more contributors here -->
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/muh-habeeb"><img src="https://avatars.githubusercontent.com/u/muh-habeeb?v=4?s=100" width="100px;" alt="Muhammed Habeeb Rahman K T"/><br /><sub><b>Muhammed Habeeb Rahman K T</b></sub></a><br /><a href="https://github.com/muh-habeeb/interview-management-system/commits?author=muh-habeeb" title="Code">💻</a> <a href="https://github.com/muh-habeeb/interview-management-system/commits?author=muh-habeeb" title="Documentation">📖</a> <a href="#design-muh-habeeb" title="Design">🎨</a> <a href="#infra-muh-habeeb" title="Infrastructure">🚇</a> <a href="#maintenance-muh-habeeb" title="Maintenance">🚧</a></td>
     </tr>
   </tbody>
 </table>
@@ -484,28 +519,34 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
-### 📊 Contribution Stats
+### 🎯 How to become a contributor
 
-<div align="center">
+1. 🍴 **Fork the repository**
+2. 💻 **Make meaningful contributions** (code, docs, design, etc.)
+3. 📝 **Submit a Pull Request** with clear description
+4. 🎉 **Get automatically added** to contributors once PR is merged!
 
-![Contributors](https://img.shields.io/github/contributors/muh-habeeb/interview-management-system?style=for-the-badge&color=brightgreen)
-![Last Commit](https://img.shields.io/github/last-commit/muh-habeeb/interview-management-system?style=for-the-badge&color=blue)
-![Commit Activity](https://img.shields.io/github/commit-activity/m/muh-habeeb/interview-management-system?style=for-the-badge&color=orange)
+**Types of contributions recognized:**
+- 💻 Code contributions
+- � Documentation improvements  
+- 🎨 Design and UI/UX
+- 🐛 Bug reports and testing
+- 💡 Ideas and feature suggestions
+- 🤔 Answering questions in issues
+- 🚇 Infrastructure and DevOps
+- 🌍 Translation and localization
 
-</div>
+### 🤖 Automatic Recognition
 
-### 🎯 Want to be featured here?
+Contributors are automatically recognized through:
+- **GitHub Contributors Graph**: Shows all code contributors
+- **All Contributors Bot**: Recognizes various types of contributions
+- **Contribution Stats**: Live badges showing project activity
 
-1. 🍴 **Fork the repo** and make meaningful contributions
-2. 📝 **Submit quality PRs** with clear descriptions
-3. 🤝 **Help others** by reviewing PRs and answering questions
-4. 📚 **Improve documentation** or add examples
-5. 🐛 **Report bugs** or suggest enhancements
-
-**Recognition levels:**
-- 🥉 **First contribution**: Welcome badge
-- 🥈 **5+ contributions**: Featured contributor
-- 🥇 **Core contributor**: Special recognition & direct collaboration
+To add yourself to the All Contributors list, comment on any issue or PR:
+```
+@all-contributors please add @username for code, docs, design
+```
 
 ## �📄 License
 
