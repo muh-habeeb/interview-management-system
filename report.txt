@@ -1,0 +1,969 @@
+INTERVIEW MANAGEMENT SYSTEM - PROJECT REPORT
+
+================================================================================
+2.4 FUNCTIONAL REQUIREMENTS
+================================================================================
+
+2.4.1 Module 1: Authentication & User Management
+• Secure login/signup for Interviewer and Candidate using Clerk
+• Validate user credentials and roles
+• Store user profile information (name, email, avatar, role)
+• Manage user sessions and logout functionality
+• Support OAuth integrations (Google, GitHub, etc.)
+
+2.4.2 Module 2: Interview Scheduling & Management
+• Interviewer can create new interview sessions
+• Set interview details (title, description, date/time)
+• Candidate receives interview invitations
+• Candidates can join available interviews from home page
+• Display interview status (SCHEDULED, IN_PROGRESS, COMPLETED, CANCELLED)
+• Real-time synchronization between interviewer and candidate
+
+2.4.3 Module 3: Interview Conduction & Communication
+• Establish real-time video/audio connection using Stream SDK
+• Enable chat/messaging between interviewer and candidate
+• Support code editor for technical interviews (if applicable)
+• Screen sharing capabilities
+• Interview recording and playback functionality
+• End interview session with proper cleanup
+
+2.4.4 Module 4: Post-Interview Evaluation & Feedback
+• Interviewer updates candidate status (PASS/FAIL)
+• Add detailed feedback/comments about interview performance
+• Store evaluation results in database
+• Candidate can view their feedback and results
+• Generate performance reports and analytics
+
+2.4.5 Module 5: Interview History & Recording Management
+• View past interviews and recordings
+• Access interview transcripts and feedback
+• Download recordings (if applicable)
+• Filter and search through interview history
+• Maintain audit trail of all interviews
+
+================================================================================
+2.5 DESIGN CONSTRAINTS
+================================================================================
+
+• Real-time communication: Must support low-latency video/audio streaming
+• Cross-platform compatibility: Works on desktop and web browsers
+• Responsive design: Optimal experience on different screen sizes
+• Authentication security: Secure token management and session handling
+• Database consistency: Ensure data integrity during concurrent operations
+• Recording storage: Efficient storage and retrieval of interview recordings
+• Scalability: Support multiple simultaneous interviews
+• API rate limiting: Handle potential API throttling gracefully
+• Minimal bandwidth usage: Optimize video quality for variable network conditions
+
+================================================================================
+2.6 SYSTEM ATTRIBUTES
+================================================================================
+
+2.6.1 Reliability
+• High reliability required for critical operations (login, interview joining, recording)
+• Dependent on Stream SDK and Convex API availability
+• Fallback mechanisms for connection failures
+• Error handling and retry logic for failed operations
+
+2.6.2 Availability
+• 24/7 availability for scheduling and joining interviews
+• Local data processing reduces cloud dependency
+• Offline support for viewing recorded interviews (cached data)
+• Graceful degradation when services are unavailable
+
+2.6.3 Security
+• User authentication via Clerk (email/OAuth)
+• Role-based access control (Interviewer vs Candidate)
+• Encrypted data transmission (HTTPS/TLS)
+• Secure storage of interview recordings
+• No exposure of personal/sensitive interview data
+• Audit logging of all access events
+
+2.6.4 Usability
+• Intuitive user interface with minimal learning curve
+• One-click interview joining for candidates
+• Clear interview management dashboard for interviewers
+• Responsive feedback messages and notifications
+• Accessibility support (keyboard navigation, screen readers)
+• Help documentation and tooltips
+
+2.6.5 Maintainability
+• Modular TypeScript/React component architecture
+• Clear separation of concerns (UI, logic, data)
+• Comprehensive code documentation
+• Unit tests and integration tests
+• Version control and CI/CD pipeline
+• Easy bug fixes and feature updates
+
+2.6.6 Performance
+• Page load time < 3 seconds
+• Interview join latency < 2 seconds
+• Real-time message delivery < 500ms
+• Video streaming adaptation to network conditions
+
+================================================================================
+2.7 OTHER REQUIREMENTS
+================================================================================
+
+2.7.1 Logging & Audit Trail
+• Log all authentication events (login, logout, failed attempts)
+• Track interview creation, joining, and completion
+• Record all feedback submissions
+• Timestamp all operations for compliance
+
+2.7.2 Data Management
+• Retention policy for interview recordings (e.g., 90 days)
+• Data export functionality for archived interviews
+• GDPR compliance for user data deletion
+• Regular database backups
+
+2.7.3 Notifications & Alerts
+• Email notifications for interview reminders
+• Real-time notifications for interview invitations
+• Notification for interview feedback availability
+• System alerts for critical errors
+
+2.7.4 Analytics & Reporting
+• Interview statistics (total conducted, pass/fail rates)
+• User activity reports
+• Performance metrics dashboards
+• Interview duration and feedback trends
+
+2.7.5 Future Enhancements
+• AI-powered interview feedback suggestions
+• Automated coding challenge evaluation
+• Interview skill assessment metrics
+• Multi-language support
+• Mobile app for iOS/Android
+• Integration with HR management systems
+• Proctoring features for remote assessments
+• Interview transcript generation with AI
+
+================================================================================
+2.8 TECHNOLOGY STACK
+================================================================================
+
+Frontend:
+• Next.js 14+ (React framework)
+• TypeScript (type safety)
+• Tailwind CSS + shadcn/ui (styling)
+• React Hooks (state management)
+
+Backend & Database:
+• Convex (real-time database & backend)
+• Convex Auth (authentication)
+
+External Services:
+• Clerk (user authentication & management)
+• Stream SDK (video/audio communication)
+• Microphone & Webcam API (browser)
+
+Development Tools:
+• ESLint (code quality)
+• PostCSS (CSS processing)
+• Next.js Build System
+
+================================================================================
+2.9 DATA MODELS
+================================================================================
+
+User Schema:
+- id: string (unique identifier)
+- email: string (unique)
+- name: string
+- avatar: string (profile picture URL)
+- role: enum (INTERVIEWER | CANDIDATE)
+- clerkId: string (Clerk user ID)
+- createdAt: timestamp
+- updatedAt: timestamp
+
+Interview Schema:
+- id: string (unique identifier)
+- title: string
+- description: string
+- interviewerId: string (reference to User)
+- candidateId: string (reference to User)
+- scheduledTime: timestamp
+- startTime: timestamp (when actually started)
+- endTime: timestamp (when ended)
+- status: enum (SCHEDULED | IN_PROGRESS | COMPLETED | CANCELLED)
+- recordingUrl: string (Stream recording URL)
+- recordingId: string (Stream recording ID)
+- createdAt: timestamp
+- updatedAt: timestamp
+
+Feedback Schema:
+- id: string (unique identifier)
+- interviewId: string (reference to Interview)
+- interviewerId: string (reference to User)
+- candidateId: string (reference to User)
+- message: string (feedback comments)
+- rating: number (1-5 scale, optional)
+- passFail: enum (PASS | FAIL | PENDING)
+- tags: array (skills/competencies)
+- createdAt: timestamp
+- updatedAt: timestamp
+
+Message Schema:
+- id: string (unique identifier)
+- interviewId: string (reference to Interview)
+- senderId: string (reference to User)
+- content: string
+- type: enum (TEXT | FILE | CODE)
+- timestamp: timestamp
+- read: boolean
+
+================================================================================
+2.10 API ENDPOINTS (Backend)
+================================================================================
+
+Authentication:
+- POST /api/auth/login
+- POST /api/auth/logout
+- GET /api/auth/profile
+
+Users:
+- GET /api/users/:id
+- PUT /api/users/:id
+- GET /api/users (admin only)
+
+Interviews:
+- GET /api/interviews
+- POST /api/interviews (create)
+- GET /api/interviews/:id
+- PUT /api/interviews/:id (update status)
+- DELETE /api/interviews/:id (cancel)
+
+Feedback:
+- POST /api/interviews/:id/feedback (submit)
+- GET /api/interviews/:id/feedback
+- PUT /api/feedback/:id (update)
+
+Recordings:
+- GET /api/interviews/:id/recording
+- DELETE /api/interviews/:id/recording
+
+================================================================================
+3.2 ASSUMPTIONS AND CONSTRAINTS
+================================================================================
+
+3.2.1 Assumptions
+• Users are authorized personnel (Interviewer or Candidate)
+  - Interviewers are certified HR/Hiring managers
+  - Candidates are job applicants or internal employees
+• The system is accessed via web browsers (Chrome, Firefox, Safari, Edge)
+• Internet access is available for real-time communication
+• Users have stable network connection (minimum 2Mbps for video)
+• Devices have functional camera and microphone
+• Browser permissions are granted for camera, microphone, and screen sharing
+• Users comply with data privacy and recording consent policies
+• Interview data is used only for hiring/assessment purposes
+
+3.2.2 Constraints
+• Video quality depends on internet bandwidth and device capabilities
+• Real-time communication requires active internet connection
+• Interview recording quality limited by browser codec support
+• Concurrent interviews limited by server capacity
+• Maximum interview duration based on storage capacity
+• Time zone handling for global scheduling
+• Browser compatibility restrictions (WebRTC support required)
+• Data storage constraints (recording file sizes)
+• API rate limiting from external services (Clerk, Stream, Convex)
+• Mobile browser support limitations for video/audio
+
+================================================================================
+3.3 FUNCTIONAL DECOMPOSITION
+================================================================================
+
+The Interview Management System is divided into the following major functional units:
+
+3.3.1 Module 1: Authentication & Authorization System
+• Clerk OAuth 2.0 integration (Email, Google, GitHub)
+• Role-based access control (INTERVIEWER | CANDIDATE)
+• Session management and token validation
+• Password reset and account recovery
+• User profile management
+
+3.3.2 Module 2: Interview Scheduling & Lifecycle Management
+• Interview creation and configuration by interviewer
+• Scheduling with date/time validation
+• Invitation system for candidates
+• Interview status tracking (SCHEDULED → IN_PROGRESS → COMPLETED)
+• Cancellation and rescheduling functionality
+• Calendar integration for scheduling
+
+3.3.3 Module 3: Real-Time Communication Module
+• Video/audio streaming using Stream SDK
+• Chat messaging between participants
+• Screen sharing capabilities
+• Recording initialization and management
+• Connection quality monitoring
+• Error handling and reconnection logic
+
+3.3.4 Module 4: Interview Conduction & Control
+• Interview room interface (video, audio, chat panels)
+• Code editor for technical assessments (if applicable)
+• Timer and interview duration management
+• Participant presence detection
+• Interview controls (mute, camera toggle, sharing)
+
+3.3.5 Module 5: Evaluation & Feedback Module
+• Feedback form with structured questions
+• Pass/Fail decision recording
+• Rating and scoring system
+• Detailed comments and observations
+• Feedback submission and storage
+• Candidate feedback viewing
+
+3.3.6 Module 6: Recording & Playback Module
+• Interview recording initialization
+• Automatic recording during sessions
+• Recording storage and retrieval
+• Playback functionality with controls
+• Recording deletion with retention policies
+
+3.3.7 Module 7: Dashboard & Analytics Module
+• Interview statistics and metrics
+• Pass/Fail rate analytics
+• Interview history and search
+• User activity tracking
+• Performance reports generation
+
+================================================================================
+3.4 DESCRIPTION OF PROGRAM & CONTEXT FLOW
+================================================================================
+
+3.4.1 System Entities & Components
+
+Core Entities:
+• User (Interviewer/Candidate)
+  - Authentication state
+  - Role and permissions
+  - Profile information
+  
+• Interview Session
+  - Participants (interviewer + candidate)
+  - Status and metadata
+  - Recording reference
+  
+• Communication Channel
+  - Video stream (Stream SDK)
+  - Audio stream
+  - Chat messages
+  - Data channel (for file sharing)
+
+External Services:
+• Clerk (Authentication provider)
+• Stream (Real-time communication)
+• Convex (Database & backend)
+• Browser APIs (Camera, Microphone, Screen Capture)
+
+3.4.2 System Block Diagram
+
+┌─────────────────────────────────────────────────────────────┐
+│                    CLIENT (Browser)                         │
+│  ┌──────────────┬──────────────┬──────────────┐            │
+│  │  Video/Audio │  Chat Module │  UI Control  │            │
+│  │   Manager    │   & Messaging│   Panel      │            │
+│  └──────────────┴──────────────┴──────────────┘            │
+│              ↓              ↓              ↓                 │
+│  ┌─────────────────────────────────────────────┐           │
+│  │   Stream SDK (Real-time Communication)      │           │
+│  └─────────────────────────────────────────────┘           │
+│              ↓              ↓              ↓                 │
+└─────────────────────────────────────────────────────────────┘
+         ↓                    ↓                    ↓
+   ┌──────────────┐  ┌──────────────┐  ┌──────────────┐
+   │ Clerk Auth   │  │ Convex DB    │  │ Stream API   │
+   │ (OAuth)      │  │ (Backend)    │  │ (Recording)  │
+   └──────────────┘  └──────────────┘  └──────────────┘
+
+3.4.3 System Processing Flow
+
+1. Authentication Flow:
+   User → Browser → Clerk OAuth → Session Token → Authenticated User
+
+2. Interview Joining Flow:
+   Candidate → Home Page → Interview List → Join Button 
+   → Stream Connection → Interview Room
+
+3. Interview Conduction Flow:
+   Interviewer ↔ Stream SDK ↔ Candidate
+   • Video/Audio streams
+   • Chat messages
+   • Recording stream
+   • Screen sharing data
+
+4. Feedback Flow:
+   Interview End → Feedback Form → Validation → Database Storage 
+   → Candidate Notification
+
+3.4.4 Data Flow Summary
+
+Input Sources:
+• User input (login credentials, form data)
+• Microphone input (audio stream)
+• Webcam input (video stream)
+• Screen capture (screen sharing)
+• Chat messages (text input)
+
+Processing Units:
+• Authentication processor (Clerk)
+• Real-time communication processor (Stream)
+• Database processor (Convex)
+• Interview logic processor (Next.js backend)
+
+Output Destinations:
+• User interface (rendered in browser)
+• Database storage (Convex)
+• Recording storage (Stream storage)
+• Email notifications (feedback notifications)
+• Analytics dashboard (metrics and reports)
+
+3.4.5 Context Flow Diagram (CFD) Elements
+
+CFD Entities:
+• User (Interviewer/Candidate)
+• Browser & Devices (Camera, Microphone, Screen)
+• Clerk Services (OAuth, Authentication)
+• Stream Services (Real-time Communication)
+• Convex Database (Interview/User/Feedback Data)
+• Recording Storage (Video Files)
+• Notification System (Email)
+
+System Blocks:
+• Authentication Processing
+• Interview Management Logic
+• Real-time Communication
+• Recording & Storage
+• Feedback Processing
+• Analytics & Reporting
+
+Processes:
+P1: Authenticate User
+P2: Create Interview
+P3: Join Interview
+P4: Conduct Interview
+P5: Record Interview
+P6: Submit Feedback
+P7: View Analytics
+
+Data Stores:
+D1: User Database
+D2: Interview Records
+D3: Feedback Data
+D4: Recording Files
+D5: Session Cache
+D6: Analytics Cache
+
+External Entities:
+E1: Interview Participant (Interviewer)
+E2: Interview Participant (Candidate)
+E3: Clerk (Auth Provider)
+E4: Stream (Communication Provider)
+E5: Email System (Notifications)
+
+Data Flows:
+• User credentials → Auth System → Access Token
+• Interview data → Database → Interview List
+• Participant streams → Recording System → Stored Recording
+• Feedback → Database → Analytics Dashboard
+
+================================================================================
+3.5 DATA FLOW DIAGRAMS (DFDs)
+================================================================================
+
+3.5.1 DFD Level 0 (Context Diagram)
+
+                                ┌─────────────────────────────┐
+                                │   INTERVIEW MANAGEMENT      │
+                                │   SYSTEM                    │
+                                └─────────────────────────────┘
+                                         ↕
+                    ┌────────────────────┼────────────────────┐
+                    ↓                    ↓                    ↓
+            ┌──────────────┐    ┌──────────────┐    ┌──────────────┐
+            │ Interviewer  │    │ Candidate    │    │ Admin/System │
+            │              │    │              │    │              │
+            └──────────────┘    └──────────────┘    └──────────────┘
+                    ↓                    ↓                    ↓
+        • Create Interview    • Join Interview      • Analytics
+        • Schedule Meeting    • View Feedback       • Reports
+        • Submit Feedback     • View History        • Monitoring
+
+
+3.5.2 DFD Level 1 (Main Processes)
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                                                                             │
+│  ┌────────────────┐          ┌────────────────┐          ┌────────────────┐
+│  │   E1           │          │   E2           │          │   E3           │
+│  │ Interviewer    │          │ Candidate      │          │ Auth Provider  │
+│  │                │          │                │          │ (Clerk/OAuth)  │
+│  └────────┬───────┘          └────────┬───────┘          └────────┬───────┘
+│           │                           │                           │
+│           ↓                           ↓                           ↓
+│  ┌─────────────────────────────────────────────────────────────────┐
+│  │                                                                 │
+│  │ P1: AUTHENTICATE USER                                          │
+│  │ ├─ Receive credentials                                         │
+│  │ ├─ Verify with OAuth provider                                  │
+│  │ ├─ Create session token                                        │
+│  │ └─ Return auth status                                          │
+│  │                                                                 │
+│  └─────────────────────────────────────────────────────────────────┘
+│           │                           │                           │
+│           ↓                           ↓                           ↓
+│  ┌─────────────────────────────────────────────────────────────────┐
+│  │                                                                 │
+│  │ P2: MANAGE INTERVIEWS                                          │
+│  │ ├─ Create interview (Interviewer)                              │
+│  │ ├─ Schedule meeting                                            │
+│  │ ├─ Update status                                               │
+│  │ ├─ Join interview (Candidate)                                  │
+│  │ └─ Store interview data                                        │
+│  │                                                                 │
+│  └─────────────────────────────────────────────────────────────────┘
+│           │                           │                           │
+│           ↓                           ↓                           ↓
+│  ┌─────────────────────────────────────────────────────────────────┐
+│  │                                                                 │
+│  │ P3: CONDUCT INTERVIEW                                          │
+│  │ ├─ Establish video/audio connection                            │
+│  │ ├─ Enable messaging/chat                                       │
+│  │ ├─ Record session                                              │
+│  │ ├─ Share screen (optional)                                     │
+│  │ └─ End interview session                                       │
+│  │                                                                 │
+│  └─────────────────────────────────────────────────────────────────┘
+│           │                           │                           │
+│           ↓                           ↓                           ↓
+│  ┌─────────────────────────────────────────────────────────────────┐
+│  │                                                                 │
+│  │ P4: PROCESS FEEDBACK                                           │
+│  │ ├─ Submit evaluation form (Interviewer)                        │
+│  │ ├─ Update pass/fail status                                     │
+│  │ ├─ Store feedback comments                                     │
+│  │ ├─ Generate report                                             │
+│  │ └─ Notify candidate                                            │
+│  │                                                                 │
+│  └─────────────────────────────────────────────────────────────────┘
+│           │                           │                           │
+│           ↓                           ↓                           ↓
+│           D1: USER DATABASE  ←→  D2: INTERVIEW DB  ←→  D3: FEEDBACK DB
+│                              ↕
+│                    D4: RECORDING STORAGE
+│                              ↕
+│                    D5: SESSION CACHE
+│
+└─────────────────────────────────────────────────────────────────────────────┘
+
+
+3.5.3 DFD Level 2 (Detailed Process Flows)
+
+A. AUTHENTICATION PROCESS (P1 DETAILED)
+
+┌──────────────────────────────────────────────────────────────────────┐
+│                    P1: AUTHENTICATE USER                            │
+├──────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  Input: User credentials (email/password) or OAuth token            │
+│                                                                      │
+│  ┌─ P1.1: VALIDATE INPUT                                            │
+│  │   • Check email format                                           │
+│  │   • Verify input not empty                                       │
+│  │   • Store attempt in D1 (audit log)                              │
+│  │                                                                  │
+│  ├─ P1.2: EXTERNAL AUTH (Clerk OAuth)                              │
+│  │   • Send credentials to Clerk                                    │
+│  │   • Receive auth response                                        │
+│  │   • Handle errors (invalid credentials)                          │
+│  │                                                                  │
+│  ├─ P1.3: CREATE SESSION                                            │
+│  │   • Generate session token                                       │
+│  │   • Store in D5 (session cache)                                  │
+│  │   • Set token expiration                                         │
+│  │                                                                  │
+│  ├─ P1.4: FETCH USER PROFILE                                        │
+│  │   • Query D1 for user details                                    │
+│  │   • Get role (INTERVIEWER | CANDIDATE)                           │
+│  │   • Return user info to client                                   │
+│  │                                                                  │
+│  └─ Output: Session token + User profile + Role                    │
+│                                                                      │
+└──────────────────────────────────────────────────────────────────────┘
+
+B. INTERVIEW MANAGEMENT PROCESS (P2 DETAILED)
+
+┌──────────────────────────────────────────────────────────────────────┐
+│                  P2: MANAGE INTERVIEWS                              │
+├──────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  INTERVIEWER FLOW:                                                  │
+│  ┌─ P2.1: CREATE INTERVIEW                                          │
+│  │   • Validate input (title, description, time)                   │
+│  │   • Generate interview ID                                       │
+│  │   • Set status = SCHEDULED                                      │
+│  │   • Store in D2 (interview records)                             │
+│  │   • Return interview details                                    │
+│  │                                                                  │
+│  ├─ P2.2: INVITE CANDIDATE                                          │
+│  │   • Add candidate to interview                                  │
+│  │   • Generate invite link                                        │
+│  │   • Send email notification                                     │
+│  │   • Update D2 with candidate info                               │
+│  │                                                                  │
+│  └─ P2.3: UPDATE INTERVIEW STATUS                                   │
+│      • Change status to IN_PROGRESS / COMPLETED / CANCELLED         │
+│      • Record start/end times                                      │
+│      • Update D2                                                   │
+│                                                                      │
+│  CANDIDATE FLOW:                                                    │
+│  ┌─ P2.4: VIEW INTERVIEWS                                           │
+│  │   • Query D2 for assigned interviews                            │
+│  │   • Filter by status and date                                   │
+│  │   • Return interview list                                       │
+│  │                                                                  │
+│  └─ P2.5: JOIN INTERVIEW                                            │
+│      • Validate interview exists and status = SCHEDULED             │
+│      • Check candidate permissions                                 │
+│      • Initialize Stream connection                                │
+│      • Update status to IN_PROGRESS                                │
+│                                                                      │
+└──────────────────────────────────────────────────────────────────────┘
+
+C. INTERVIEW CONDUCTION PROCESS (P3 DETAILED)
+
+┌──────────────────────────────────────────────────────────────────────┐
+│                  P3: CONDUCT INTERVIEW                              │
+├──────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  ┌─ P3.1: ESTABLISH CONNECTION                                      │
+│  │   • Initialize Stream SDK                                       │
+│  │   • Request camera/microphone permissions                       │
+│  │   • Establish peer connection                                   │
+│  │   • Exchange SDP offers/answers                                  │
+│  │                                                                  │
+│  ├─ P3.2: START RECORDING                                           │
+│  │   • Initialize recording with Stream                            │
+│  │   • Store recording ID in D2                                    │
+│  │   • Log start time                                              │
+│  │                                                                  │
+│  ├─ P3.3: ENABLE COMMUNICATION                                      │
+│  │   • Setup video/audio streams                                   │
+│  │   • Enable chat channel                                         │
+│  │   • Store messages in D2                                        │
+│  │   • Stream real-time data                                       │
+│  │                                                                  │
+│  ├─ P3.4: MONITOR CONNECTION                                        │
+│  │   • Check bandwidth quality                                     │
+│  │   • Adjust video quality if needed                              │
+│  │   • Handle reconnections                                        │
+│  │   • Log connection metrics                                      │
+│  │                                                                  │
+│  └─ P3.5: END INTERVIEW                                             │
+│      • Stop recording                                              │
+│      • Close streams gracefully                                    │
+│      • Process recording (upload to D4)                            │
+│      • Update interview status to COMPLETED                        │
+│      • Store recording URL in D2                                   │
+│                                                                      │
+└──────────────────────────────────────────────────────────────────────┘
+
+D. FEEDBACK PROCESS (P4 DETAILED)
+
+┌──────────────────────────────────────────────────────────────────────┐
+│                  P4: PROCESS FEEDBACK                               │
+├──────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  ┌─ P4.1: OPEN FEEDBACK FORM                                        │
+│  │   • Retrieve interview details from D2                          │
+│  │   • Load feedback template                                      │
+│  │   • Display to interviewer                                      │
+│  │                                                                  │
+│  ├─ P4.2: VALIDATE FEEDBACK                                         │
+│  │   • Check required fields (pass/fail, message)                  │
+│  │   • Validate input length and format                            │
+│  │   • Return errors if validation fails                           │
+│  │                                                                  │
+│  ├─ P4.3: STORE FEEDBACK                                            │
+│  │   • Create feedback record                                      │
+│  │   • Store in D3 (feedback database)                             │
+│  │   • Update interview status in D2                               │
+│  │   • Link feedback to interview and candidate                    │
+│  │                                                                  │
+│  ├─ P4.4: GENERATE REPORT                                           │
+│  │   • Compile interview data from D2                              │
+│  │   • Combine with feedback from D3                               │
+│  │   • Generate PDF/text report                                    │
+│  │   • Cache in D5 for quick access                                │
+│  │                                                                  │
+│  └─ P4.5: NOTIFY CANDIDATE                                          │
+│      • Send email notification to candidate                        │
+│      • Include feedback summary                                    │
+│      • Provide link to view full feedback                          │
+│      • Update candidate notifications in D1                        │
+│                                                                      │
+└──────────────────────────────────────────────────────────────────────┘
+
+
+3.5.4 Data Stores Details
+
+Data Store D1: USER DATABASE
+├─ user_id (PK)
+├─ email
+├─ name
+├─ role (INTERVIEWER | CANDIDATE)
+├─ profile_pic
+├─ clerk_id
+├─ created_at
+├─ updated_at
+└─ audit_logs
+
+Data Store D2: INTERVIEW RECORDS
+├─ interview_id (PK)
+├─ title
+├─ description
+├─ interviewer_id (FK)
+├─ candidate_id (FK)
+├─ scheduled_time
+├─ start_time
+├─ end_time
+├─ status (SCHEDULED | IN_PROGRESS | COMPLETED)
+├─ recording_id
+├─ recording_url
+└─ messages[]
+
+Data Store D3: FEEDBACK DATABASE
+├─ feedback_id (PK)
+├─ interview_id (FK)
+├─ interviewer_id (FK)
+├─ candidate_id (FK)
+├─ pass_fail (PASS | FAIL)
+├─ message
+├─ rating (1-5)
+├─ tags[]
+├─ created_at
+└─ updated_at
+
+Data Store D4: RECORDING STORAGE
+├─ recording_id (PK)
+├─ interview_id (FK)
+├─ file_url
+├─ duration
+├─ size
+├─ codec
+├─ created_at
+└─ expiration_date
+
+Data Store D5: SESSION CACHE
+├─ session_id (PK)
+├─ user_id (FK)
+├─ token
+├─ expiration_time
+├─ device_info
+└─ last_activity
+
+================================================================================
+3.6 ENTITY-RELATIONSHIP (ER) DIAGRAM
+================================================================================
+
+3.6.1 ER Diagram - Database Schema
+
+                        ┌──────────────────────┐
+                        │       USERS          │
+                        ├──────────────────────┤
+                        │ user_id (PK)         │
+                        │ email                │
+                        │ name                 │
+                        │ avatar_url           │
+                        │ role                 │◄─────┐
+                        │ clerk_id             │      │ ROLE: INTERVIEWER
+                        │ created_at           │      │       CANDIDATE
+                        │ updated_at           │      │
+                        └──────────────────────┘      │
+                               △                      │
+                               │                      │
+                 ┌─────────────┬┴──────────────┐      │
+                 │             │               │      │
+                 │ 1:N         │ 1:N           │      │
+                 │             │               │      │
+        ┌────────┴──────┐  ┌───┴─────────┐    │      │
+        │            1:N│  │1:N          │    │      │
+        │                │  │             │    │      │
+        │                ↓  ↓             │    │      │
+┌──────────────────┐  ┌─────────────────────┐ │      │
+│    INTERVIEWS    │  │     MESSAGES        │ │      │
+├──────────────────┤  ├─────────────────────┤ │      │
+│ interview_id(PK) │  │ message_id (PK)     │ │      │
+│ title            │  │ interview_id (FK)   │──┘      │
+│ description      │  │ sender_id (FK)      │───┐     │
+│ interviewer_id   │  │ content             │   │     │
+│ (FK → USERS)     │  │ message_type        │   │     │
+│ candidate_id     │  │ timestamp           │   │     │
+│ (FK → USERS)     │  │ read_status         │   │     │
+│ scheduled_time   │  └─────────────────────┘   │     │
+│ start_time       │                            │     │
+│ end_time         │       ┌──────────────────────┘    │
+│ status           │       │ FOREIGN KEYS             │
+│ recording_id     │       │ (sender_id → USERS)      │
+│ (FK → RECORDINGS)│       │                          │
+│ created_at       │       │                          │
+│ updated_at       │       │                          │
+└────────┬─────────┘       │                          │
+         │ 1:N             │                          │
+         │ 1:1             ↓                          │
+         │        ┌──────────────────────┐            │
+         │        │   FEEDBACK           │            │
+         │        ├──────────────────────┤            │
+         │        │ feedback_id (PK)     │            │
+         │        │ interview_id (FK)    │            │
+         │        │ interviewer_id (FK)  │            │
+         │        │ candidate_id (FK)    │            │
+         │        │ pass_fail_status     │            │
+         │        │ rating               │            │
+         │        │ message              │            │
+         │        │ tags (array)         │            │
+         │        │ created_at           │            │
+         │        │ updated_at           │            │
+         │        └──────────────────────┘            │
+         │                                            │
+         │ 1:1                                        │
+         │                                            │
+         └────────┬──────────────────────────────────┘
+                  │
+                  ↓
+        ┌──────────────────────┐
+        │    RECORDINGS        │
+        ├──────────────────────┤
+        │ recording_id (PK)    │
+        │ interview_id (FK)    │
+        │ file_url             │
+        │ duration             │
+        │ file_size            │
+        │ codec                │
+        │ created_at           │
+        │ expiration_date      │
+        │ storage_provider     │
+        └──────────────────────┘
+
+
+3.6.2 Relationship Description
+
+1. USERS ↔ INTERVIEWS (1:N)
+   • One user (Interviewer) can conduct many interviews
+   • One user (Candidate) can participate in many interviews
+   • Relationship: interviewer_id and candidate_id both reference USERS
+   • Cardinality: 1 Interviewer → N Interviews
+   • Cardinality: 1 Candidate → N Interviews
+
+2. INTERVIEWS ↔ MESSAGES (1:N)
+   • One interview can have many messages
+   • Each message belongs to exactly one interview
+   • Relationship: message.interview_id → interview.interview_id
+   • Cardinality: 1 Interview → N Messages
+   • Support chat history and communication logs
+
+3. INTERVIEWS ↔ RECORDINGS (1:1)
+   • One interview generates one recording
+   • Each recording belongs to exactly one interview
+   • Relationship: interview.recording_id → recording.recording_id
+   • Cardinality: 1 Interview ↔ 1 Recording
+   • Optional: recording may be deleted but interview remains
+
+4. INTERVIEWS ↔ FEEDBACK (1:1)
+   • One interview receives one feedback submission
+   • Each feedback belongs to exactly one interview
+   • Relationship: feedback.interview_id → interview.interview_id
+   • Cardinality: 1 Interview → 1 Feedback
+   • Feedback created after interview completion
+
+5. USERS ↔ FEEDBACK (1:N)
+   • One user (Interviewer) can write many feedback records
+   • One user (Candidate) can receive many feedback records
+   • Relationship: interviewer_id and candidate_id reference USERS
+   • Cardinality: 1 User → N Feedback
+
+6. MESSAGES ↔ USERS (N:1)
+   • Many messages sent by users
+   • Each message has one sender
+   • Relationship: message.sender_id → user.user_id
+   • Supports message history and audit trail
+
+
+3.6.3 Integrity Constraints
+
+Primary Keys (PK):
+• USERS: user_id (UUID)
+• INTERVIEWS: interview_id (UUID)
+• MESSAGES: message_id (UUID)
+• FEEDBACK: feedback_id (UUID)
+• RECORDINGS: recording_id (UUID)
+
+Foreign Keys (FK):
+• INTERVIEWS.interviewer_id → USERS.user_id (NOT NULL)
+• INTERVIEWS.candidate_id → USERS.user_id (NOT NULL)
+• INTERVIEWS.recording_id → RECORDINGS.recording_id (NULLABLE)
+• MESSAGES.interview_id → INTERVIEWS.interview_id (NOT NULL)
+• MESSAGES.sender_id → USERS.user_id (NOT NULL)
+• FEEDBACK.interview_id → INTERVIEWS.interview_id (NOT NULL)
+• FEEDBACK.interviewer_id → USERS.user_id (NOT NULL)
+• FEEDBACK.candidate_id → USERS.user_id (NOT NULL)
+• RECORDINGS.interview_id → INTERVIEWS.interview_id (NOT NULL)
+
+Unique Constraints:
+• USERS.email (unique across all users)
+• USERS.clerk_id (unique, from Clerk provider)
+• INTERVIEWS.interview_id (unique identifier)
+
+Check Constraints:
+• INTERVIEWS.status IN ('SCHEDULED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED')
+• FEEDBACK.pass_fail_status IN ('PASS', 'FAIL', 'PENDING')
+• FEEDBACK.rating BETWEEN 1 AND 5
+• MESSAGES.message_type IN ('TEXT', 'FILE', 'CODE', 'SYSTEM')
+
+
+3.6.4 Indexes for Performance
+
+Primary Indexes:
+• USERS(user_id) - Primary key
+• INTERVIEWS(interview_id) - Primary key
+• MESSAGES(message_id) - Primary key
+• FEEDBACK(feedback_id) - Primary key
+• RECORDINGS(recording_id) - Primary key
+
+Foreign Key Indexes:
+• INTERVIEWS(interviewer_id) - For querying interviewer's interviews
+• INTERVIEWS(candidate_id) - For querying candidate's interviews
+• MESSAGES(interview_id) - For retrieving interview chat history
+• MESSAGES(sender_id) - For user activity tracking
+• FEEDBACK(interview_id) - For interview evaluation lookup
+• FEEDBACK(interviewer_id) - For interviewer's feedback
+• FEEDBACK(candidate_id) - For candidate's feedback
+• RECORDINGS(interview_id) - For quick recording retrieval
+
+Composite Indexes:
+• INTERVIEWS(status, scheduled_time) - For filtering scheduled interviews
+• MESSAGES(interview_id, timestamp) - For chronological chat retrieval
+• FEEDBACK(interview_id, created_at) - For feedback history
+
+
+3.6.5 Denormalization Considerations
+
+Denormalized Fields (for performance):
+• INTERVIEWS: store candidate_email, interviewer_email for quick notifications
+• INTERVIEWS: store candidate_name, interviewer_name for UI display
+• FEEDBACK: store candidate_email for notification without JOIN
+• RECORDINGS: store interview_title, interview_date for quick identification
+
+Benefits:
+• Reduced query complexity
+• Faster dashboard loads
+• Better real-time performance
+
+Maintenance:
+• Update denormalized fields when source data changes
+• Use database triggers or application logic
+• Monitor data consistency
+
+================================================================================

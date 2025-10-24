@@ -1,0 +1,88 @@
+INTERVIEW MANAGEMENT SYSTEM - BASIC DATA FLOW
+
+=== USER TYPES ===
+1. Interviewer
+2. Candidate
+
+=== AUTHENTICATION FLOW ===
+- Both Interviewer and Candidate need to authenticate
+- Secure login/signup process required 
+
+=== INTERVIEW FLOW ===
+
+1. HOME PAGE
+   - Candidate: Can view available interviews and join
+   - Interviewer: Can view scheduled interviews and candidates
+
+2. INTERVIEW CREATION (Interviewer Only)
+   - Interviewer can create new interview sessions
+   - Set interview details (title, time, description, etc.)
+   - Select candidate(s) to invite
+
+3. INTERVIEW JOIN
+   - Candidate joins interview from home page
+   - Establishes connection with interviewer
+   - Both can communicate (video/audio/chat)
+
+4. INTERVIEW SESSION
+   - Interviewer can manage the interview
+   - Code editor for coding interviews (if applicable)
+   - Chat/messaging between interviewer and candidate
+   - Recording of interview
+
+5. END INTERVIEW
+   - Interviewer ends the interview session
+   - Interview recording is saved
+
+6. POST-INTERVIEW EVALUATION (Interviewer Only)
+   - Interviewer updates candidate status: PASS / FAIL
+   - Add detailed feedback/message about the interview
+   - Save evaluation results
+   - Candidate can view feedback
+
+=== KEY FEATURES ===
+- Real-time communication between interviewer and candidate
+- Interview recording and playback
+- User authentication (Clerk integration)
+- Interview scheduling
+- Interview history and recordings
+- Performance evaluation and feedback system
+
+=== TECH STACK ===
+- Frontend: Next.js, TypeScript, React
+- Backend: Convex for database and real-time features
+- Authentication: Clerk
+- Video/Communication: Stream SDK
+- UI Components: shadcn/ui
+
+=== DATA MODELS ===
+
+User:
+- id
+- role (INTERVIEWER | CANDIDATE)
+- email
+- name
+- avatar
+- authenticated: boolean
+
+Interview:
+- id
+- title
+- description
+- interviewer_id (reference to User)
+- candidate_id (reference to User)
+- scheduled_time
+- start_time
+- end_time
+- status (SCHEDULED | IN_PROGRESS | COMPLETED | CANCELLED)
+- recording_url
+- feedback (optional)
+- pass_fail_status (optional: PASS | FAIL)
+
+Feedback:
+- id
+- interview_id (reference to Interview)
+- interviewer_id (reference to User)
+- message
+- pass_fail: PASS | FAIL
+- created_at
