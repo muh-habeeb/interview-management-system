@@ -64,10 +64,7 @@ export default function RootLayout({
                     {"Log In to continue"}
                   </h2>
                   <Button asChild>
-                    <SignInButton >
-                      <RedirectToSignIn />
-
-                    </SignInButton>
+                    <SignInButton />
                   </Button>
                   <RedirectToSignIn />
                 </main>
