@@ -41,7 +41,7 @@ export default function RootLayout({
     <ConvexClerkProvider>
       <html lang="en" suppressHydrationWarning>
         <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
           <ThemeProvider
             attribute="class"
@@ -64,7 +64,10 @@ export default function RootLayout({
                     {"Log In to continue"}
                   </h2>
                   <Button asChild>
-                    <SignInButton />
+                    <SignInButton >
+                      <RedirectToSignIn />
+
+                    </SignInButton>
                   </Button>
                   <RedirectToSignIn />
                 </main>
