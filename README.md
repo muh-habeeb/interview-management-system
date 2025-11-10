@@ -539,7 +539,7 @@ copies or substantial portions of the Software.
 
 ## 👥 Contact
 
-<div align="center">
+<div align="center" style="list-style:none;">
 
 ### 🛠 Maintainer
 
